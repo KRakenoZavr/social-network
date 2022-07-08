@@ -9,7 +9,7 @@ import (
 )
 
 type Router struct {
-	routes []*Route
+	Routes []*Route
 }
 
 func NewRouter() *Router {
@@ -17,7 +17,7 @@ func NewRouter() *Router {
 }
 
 func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
-	for _, route := range r.routes {
+	for _, route := range r.Routes {
 		if route.Match(req) {
 			route.handler.ServeHTTP(w, req)
 			break
@@ -27,8 +27,8 @@ func (r *Router) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 func (r *Router) HandleFunc(path string, f http.HandlerFunc) *Route {
 	reg := toRegexp(path)
-	route := NewRoute(reg, f)
-	r.routes = append(r.routes, route)
+	route := NewRoute(reg, f, path)
+	r.Routes = append(r.Routes, route)
 
 	context.append(route.reg, reg.SubexpNames()...)
 	return route
@@ -41,8 +41,8 @@ func (r *Router) PathPrefix(prefix string) *Route {
 		log.Fatal(err)
 	}
 
-	route := NewRoute(reg, nil)
-	r.routes = append(r.routes, route)
+	route := NewRoute(reg, nil, prefix)
+	r.Routes = append(r.Routes, route)
 
 	return route
 }

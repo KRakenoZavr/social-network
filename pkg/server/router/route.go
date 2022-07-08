@@ -9,10 +9,11 @@ type Route struct {
 	methods []string
 	reg     *regexp.Regexp
 	handler http.Handler
+	path    string
 }
 
-func NewRoute(reg *regexp.Regexp, h http.Handler) *Route {
-	return &Route{reg: reg, handler: h}
+func NewRoute(reg *regexp.Regexp, h http.Handler, p string) *Route {
+	return &Route{reg: reg, handler: h, path: p}
 }
 
 func (r *Route) Handle(h http.Handler) {
