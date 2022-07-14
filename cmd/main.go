@@ -14,5 +14,6 @@ func main() {
 	// fmt.Println("Database successfully inited")
 
 	serv := server.NewServer()
+	// lol := users.InitUsers(serv)
 	log.Fatal(serv.Start(":8080"))
 }

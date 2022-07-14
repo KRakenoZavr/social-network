@@ -6,14 +6,14 @@ import (
 )
 
 type Route struct {
-	methods []string
-	reg     *regexp.Regexp
-	handler http.Handler
-	path    string
+	Rmethods []string
+	reg      *regexp.Regexp
+	handler  http.Handler
+	Path     string
 }
 
 func NewRoute(reg *regexp.Regexp, h http.Handler, p string) *Route {
-	return &Route{reg: reg, handler: h, path: p}
+	return &Route{reg: reg, handler: h, Path: p}
 }
 
 func (r *Route) Handle(h http.Handler) {
@@ -21,15 +21,15 @@ func (r *Route) Handle(h http.Handler) {
 }
 
 func (r *Route) Methods(methods ...string) {
-	r.methods = methods
+	r.Rmethods = methods
 }
 
 func (r *Route) MatchMethods(req *http.Request) bool {
-	if len(r.methods) == 0 {
+	if len(r.Rmethods) == 0 {
 		return true
 	}
 
-	for _, m := range r.methods {
+	for _, m := range r.Rmethods {
 		if m == req.Method {
 			return true
 		}

@@ -36,7 +36,20 @@ func (s *Server) Start(port string) error {
 		Handler: (ctrl.Middlewares{c.Tracing, c.Logging}).Apply(s.router),
 	}
 
-	fmt.Println(s.router.PathMap)
+	/*
+		TODO
+		should handle NOTFOUND
+		lsd := map[string][]string{}
+		for _, r := range s.router.Routes {
+			if len(lsd[r.Path]) > 0 {
+				lsd[r.Path] = append(lsd[r.Path], r.Rmethods...)
+			} else {
+				lsd[r.Path] = r.Rmethods
+			}
+		}
+
+		fmt.Println(lsd)
+	*/
 
 	return server.ListenAndServe()
 }
@@ -45,6 +58,13 @@ func (s *Server) configureRouter() {
 	s.router.HandleFunc("/", mw.Check(s.load)).Methods("GET")
 	s.router.HandleFunc("/:id", mw.Check(s.load)).Methods("GET")
 	s.router.HandleFunc("/asd", mw.Check(s.load)).Methods("POST")
+	s.router.HandleFunc("/asd", mw.Check(s.load)).Methods("GET")
+}
+
+func (s *Server) Response(w http.ResponseWriter, httpCode int, msg interface{}) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(httpCode)
+	json.NewEncoder(w).Encode(msg)
 }
 
 func (s *Server) load(w http.ResponseWriter, r *http.Request) {
@@ -61,7 +81,5 @@ func (s *Server) load(w http.ResponseWriter, r *http.Request) {
 		"user",
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	s.Response(w, http.StatusCreated, response)
 }
